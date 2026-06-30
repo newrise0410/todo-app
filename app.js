@@ -102,3 +102,28 @@ function subscribe() {
   );
 }
 subscribe();
+
+// --- Add todo ---
+document.getElementById("todo-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const titleEl = document.getElementById("title-input");
+  const title = titleEl.value.trim();
+  if (!title) return; // ignore empty titles
+  const dueDate = document.getElementById("due-input").value || null;
+  const category = document.getElementById("category-select").value;
+  try {
+    await addDoc(collection(db, "todos"), {
+      title,
+      done: false,
+      dueDate,
+      category,
+      createdAt: serverTimestamp(),
+    });
+    e.target.reset();
+    document.getElementById("category-select").value = "기타";
+    titleEl.focus();
+  } catch (err) {
+    console.error(err);
+    showToast("추가에 실패했습니다");
+  }
+});
