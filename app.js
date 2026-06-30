@@ -127,3 +127,26 @@ document.getElementById("todo-form").addEventListener("submit", async (e) => {
     showToast("추가에 실패했습니다");
   }
 });
+
+// --- Toggle / edit / delete (event delegation) ---
+document.getElementById("todo-list").addEventListener("click", async (e) => {
+  const li = e.target.closest(".todo-item");
+  if (!li) return;
+  const id = li.dataset.id;
+  try {
+    if (e.target.classList.contains("toggle")) {
+      await updateDoc(doc(db, "todos", id), { done: e.target.checked });
+    } else if (e.target.classList.contains("delete")) {
+      await deleteDoc(doc(db, "todos", id));
+    } else if (e.target.classList.contains("edit")) {
+      const current = li.querySelector(".title").textContent;
+      const next = prompt("할 일 수정", current);
+      if (next !== null && next.trim()) {
+        await updateDoc(doc(db, "todos", id), { title: next.trim() });
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("변경에 실패했습니다");
+  }
+});
