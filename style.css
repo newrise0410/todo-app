@@ -1,69 +1,85 @@
 :root {
-  --bg: #f5f6f8;
-  --surface: #ffffff;
-  --text: #1c1e21;
-  --muted: #6b7280;
-  --border: #e3e6ea;
-  --accent: #3b82f6;
-  --danger: #ef4444;
-  --badge-bg: #eef2ff;
+  --bg: #f4f1ea;
+  --surface: #fbf9f4;
+  --text: #33302b;
+  --muted: #8a8579;
+  --border: #e4dccd;
+  --accent: #7c9473;
+  --danger: #b4502f;
+  --badge-bg: #eef2e9;
+  --shadow: 0 2px 10px rgba(120, 110, 90, 0.07);
 }
 [data-theme="dark"] {
-  --bg: #16181d;
-  --surface: #21242b;
-  --text: #e8eaed;
-  --muted: #9aa0a6;
-  --border: #353941;
-  --accent: #60a5fa;
-  --danger: #f87171;
-  --badge-bg: #2b3242;
+  --bg: #1c1a17;
+  --surface: #262320;
+  --text: #ece7dd;
+  --muted: #a59e90;
+  --border: #3a352e;
+  --accent: #9bb088;
+  --danger: #d98b6a;
+  --badge-bg: #2f3329;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.30);
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--text);
 }
-#app { max-width: 640px; margin: 0 auto; padding: 24px 16px 80px; }
+#app { max-width: 640px; margin: 0 auto; padding: 32px 18px 80px; }
 
-.app-header { display: flex; align-items: center; justify-content: space-between; }
-.app-header h1 { font-size: 1.6rem; margin: 0; }
+.app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.app-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600; font-size: 2rem; margin: 0; letter-spacing: 0.5px;
+}
 #theme-toggle {
-  font-size: 1.2rem; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text);
+  font-size: 1.1rem; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: var(--text);
 }
 
-.todo-form { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+.todo-form {
+  display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 14px; box-shadow: var(--shadow);
+}
 .todo-form input[type="text"] { flex: 1 1 200px; }
 .todo-form input, .todo-form select, .filter-bar select, .filter-bar button {
-  padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
-  background: var(--surface); color: var(--text); font-size: 0.95rem;
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg); color: var(--text); font-size: 0.95rem;
 }
+.todo-form input[type="checkbox"], .todo-item input[type="checkbox"] { accent-color: var(--accent); }
 .todo-form button[type="submit"] {
-  background: var(--accent); color: #fff; border: none; border-radius: 8px;
-  padding: 8px 16px; cursor: pointer;
+  background: var(--accent); color: #fff; border: none; border-radius: 10px;
+  padding: 9px 20px; font-weight: 600; cursor: pointer;
 }
 
-.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 4px 18px; }
+.filter-bar select, .filter-bar button {
+  border-radius: 999px; padding: 7px 14px; color: var(--muted);
+  background: var(--surface); font-size: 0.82rem;
+}
 .filter-bar button { cursor: pointer; }
 
-.todo-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.todo-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
 .todo-item {
-  display: flex; align-items: center; gap: 10px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px;
+  box-shadow: var(--shadow);
 }
-.todo-item .title { flex: 1; }
+.todo-item input[type="checkbox"] { width: 18px; height: 18px; flex: none; }
+.todo-item .title { flex: 1; font-size: 0.98rem; }
 .todo-item.done .title { text-decoration: line-through; color: var(--muted); }
 .todo-item .badge {
-  font-size: 0.75rem; background: var(--badge-bg); color: var(--accent);
-  padding: 2px 8px; border-radius: 999px;
+  font-size: 0.72rem; background: var(--badge-bg); color: var(--accent);
+  padding: 3px 11px; border-radius: 999px;
 }
 .todo-item .due { font-size: 0.8rem; color: var(--muted); }
 .todo-item.overdue .due { color: var(--danger); font-weight: 600; }
 .todo-item .edit, .todo-item .delete {
-  border: none; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.85rem;
+  border: none; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.82rem;
 }
 .todo-item .delete:hover { color: var(--danger); }
 .todo-item .edit:hover { color: var(--accent); }
@@ -72,7 +88,7 @@ body {
 
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-  background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 8px;
+  background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 10px;
   opacity: 0; pointer-events: none; transition: opacity 0.2s; font-size: 0.9rem;
 }
 .toast.show { opacity: 1; }
