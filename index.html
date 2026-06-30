@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="app">
+    <header class="app-header">
+      <h1>할 일</h1>
+      <button id="theme-toggle" type="button" aria-label="테마 전환">🌙</button>
+    </header>
+
+    <form id="todo-form" class="todo-form">
+      <input id="title-input" type="text" placeholder="할 일을 입력하세요" autocomplete="off" />
+      <input id="due-input" type="date" />
+      <select id="category-select">
+        <option value="업무">업무</option>
+        <option value="개인">개인</option>
+        <option value="기타" selected>기타</option>
+      </select>
+      <button type="submit">추가</button>
+    </form>
+
+    <div class="filter-bar">
+      <select id="status-filter">
+        <option value="all">전체</option>
+        <option value="active">미완료</option>
+        <option value="done">완료</option>
+      </select>
+      <select id="category-filter">
+        <option value="all">모든 카테고리</option>
+        <option value="업무">업무</option>
+        <option value="개인">개인</option>
+        <option value="기타">기타</option>
+      </select>
+      <button id="sort-toggle" type="button">정렬: 최신순</button>
+    </div>
+
+    <ul id="todo-list" class="todo-list"></ul>
+    <div id="empty-state" class="empty-state" hidden>할 일이 없어요 🎉</div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
