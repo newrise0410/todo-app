@@ -1,0 +1,78 @@
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --text: #1c1e21;
+  --muted: #6b7280;
+  --border: #e3e6ea;
+  --accent: #3b82f6;
+  --danger: #ef4444;
+  --badge-bg: #eef2ff;
+}
+[data-theme="dark"] {
+  --bg: #16181d;
+  --surface: #21242b;
+  --text: #e8eaed;
+  --muted: #9aa0a6;
+  --border: #353941;
+  --accent: #60a5fa;
+  --danger: #f87171;
+  --badge-bg: #2b3242;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+#app { max-width: 640px; margin: 0 auto; padding: 24px 16px 80px; }
+
+.app-header { display: flex; align-items: center; justify-content: space-between; }
+.app-header h1 { font-size: 1.6rem; margin: 0; }
+#theme-toggle {
+  font-size: 1.2rem; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text);
+}
+
+.todo-form { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+.todo-form input[type="text"] { flex: 1 1 200px; }
+.todo-form input, .todo-form select, .filter-bar select, .filter-bar button {
+  padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--text); font-size: 0.95rem;
+}
+.todo-form button[type="submit"] {
+  background: var(--accent); color: #fff; border: none; border-radius: 8px;
+  padding: 8px 16px; cursor: pointer;
+}
+
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-bar button { cursor: pointer; }
+
+.todo-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.todo-item {
+  display: flex; align-items: center; gap: 10px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+}
+.todo-item .title { flex: 1; }
+.todo-item.done .title { text-decoration: line-through; color: var(--muted); }
+.todo-item .badge {
+  font-size: 0.75rem; background: var(--badge-bg); color: var(--accent);
+  padding: 2px 8px; border-radius: 999px;
+}
+.todo-item .due { font-size: 0.8rem; color: var(--muted); }
+.todo-item.overdue .due { color: var(--danger); font-weight: 600; }
+.todo-item .edit, .todo-item .delete {
+  border: none; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.85rem;
+}
+.todo-item .delete:hover { color: var(--danger); }
+.todo-item .edit:hover { color: var(--accent); }
+
+.empty-state { text-align: center; color: var(--muted); padding: 40px 0; }
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 8px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s; font-size: 0.9rem;
+}
+.toast.show { opacity: 1; }
