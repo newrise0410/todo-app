@@ -74,6 +74,12 @@ body {
 .todo-item input[type="checkbox"] { width: 18px; height: 18px; flex: none; }
 .todo-item .title { flex: 1; font-size: 0.98rem; }
 .todo-item.done .title { text-decoration: line-through; color: var(--muted); }
+.todo-item .title-edit {
+  flex: 1; font: inherit; font-size: 0.98rem; color: var(--text);
+  background: var(--bg); border: 1px solid var(--accent);
+  border-radius: 8px; padding: 5px 9px;
+}
+.todo-item .title-edit:focus { outline: none; box-shadow: 0 0 0 2px rgba(124, 148, 115, 0.25); }
 .todo-item .badge {
   font-size: 0.72rem; background: var(--badge-bg); color: var(--accent);
   padding: 3px 11px; border-radius: 999px;

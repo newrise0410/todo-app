@@ -137,17 +137,53 @@ document.getElementById("todo-list").addEventListener("click", async (e) => {
     } else if (e.target.classList.contains("delete")) {
       await remove(ref(db, `todos/${id}`));
     } else if (e.target.classList.contains("edit")) {
-      const current = li.querySelector(".title").textContent;
-      const next = prompt("할 일 수정", current);
-      if (next !== null && next.trim()) {
-        await update(ref(db, `todos/${id}`), { title: next.trim() });
-      }
+      startInlineEdit(li, id);
     }
   } catch (err) {
     console.error(err);
     showToast("변경에 실패했습니다");
   }
 });
+
+// --- Inline edit (in-place, no popup) ---
+function startInlineEdit(li, id) {
+  if (li.querySelector(".title-edit")) return; // already editing
+  const titleSpan = li.querySelector(".title");
+  const current = titleSpan.textContent;
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "title-edit";
+  input.value = current;
+  titleSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  let settled = false;
+  const finish = async (save) => {
+    if (settled) return;
+    settled = true;
+    if (save) {
+      const next = input.value.trim();
+      if (next && next !== current) {
+        try {
+          await update(ref(db, `todos/${id}`), { title: next });
+          return; // onValue will re-render with the new title
+        } catch (err) {
+          console.error(err);
+          showToast("변경에 실패했습니다");
+        }
+      }
+    }
+    render(); // cancel / no change / failure → restore the list
+  };
+
+  input.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") { ev.preventDefault(); finish(true); }
+    else if (ev.key === "Escape") { ev.preventDefault(); finish(false); }
+  });
+  input.addEventListener("blur", () => finish(true));
+}
 
 // --- Filters & sort ---
 document.getElementById("status-filter").addEventListener("change", (e) => {
