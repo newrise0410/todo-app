@@ -150,3 +150,19 @@ document.getElementById("todo-list").addEventListener("click", async (e) => {
     showToast("변경에 실패했습니다");
   }
 });
+
+// --- Filters & sort ---
+document.getElementById("status-filter").addEventListener("change", (e) => {
+  filters.status = e.target.value;
+  render();
+});
+document.getElementById("category-filter").addEventListener("change", (e) => {
+  filters.category = e.target.value;
+  render();
+});
+document.getElementById("sort-toggle").addEventListener("click", () => {
+  sortMode = sortMode === "created" ? "due" : "created";
+  document.getElementById("sort-toggle").textContent =
+    sortMode === "created" ? "정렬: 최신순" : "정렬: 마감일순";
+  render();
+});
