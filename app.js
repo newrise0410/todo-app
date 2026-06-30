@@ -1,10 +1,10 @@
 import { firebaseConfig } from "./firebase-config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { getDatabase, ref, push, update, remove, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 import { filterTodos, sortTodos, isOverdue } from "./todo-logic.js";
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getDatabase(app);
 console.log("Firebase connected:", app.name);
 
 // --- Toast ---
@@ -79,20 +79,18 @@ function render() {
 
 // --- Realtime subscription ---
 function subscribe() {
-  onSnapshot(
-    collection(db, "todos"),
+  onValue(
+    ref(db, "todos"),
     (snap) => {
-      allTodos = snap.docs.map((d) => {
-        const data = d.data({ serverTimestamps: "estimate" });
-        return {
-          id: d.id,
-          title: data.title ?? "",
-          done: !!data.done,
-          dueDate: data.dueDate ?? null,
-          category: data.category ?? "기타",
-          createdAt: data.createdAt?.toMillis?.() ?? 0,
-        };
-      });
+      const val = snap.val() || {};
+      allTodos = Object.entries(val).map(([id, data]) => ({
+        id,
+        title: data.title ?? "",
+        done: !!data.done,
+        dueDate: data.dueDate ?? null,
+        category: data.category ?? "기타",
+        createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
+      }));
       render();
     },
     (err) => {
@@ -112,7 +110,7 @@ document.getElementById("todo-form").addEventListener("submit", async (e) => {
   const dueDate = document.getElementById("due-input").value || null;
   const category = document.getElementById("category-select").value;
   try {
-    await addDoc(collection(db, "todos"), {
+    await push(ref(db, "todos"), {
       title,
       done: false,
       dueDate,
@@ -135,14 +133,14 @@ document.getElementById("todo-list").addEventListener("click", async (e) => {
   const id = li.dataset.id;
   try {
     if (e.target.classList.contains("toggle")) {
-      await updateDoc(doc(db, "todos", id), { done: e.target.checked });
+      await update(ref(db, `todos/${id}`), { done: e.target.checked });
     } else if (e.target.classList.contains("delete")) {
-      await deleteDoc(doc(db, "todos", id));
+      await remove(ref(db, `todos/${id}`));
     } else if (e.target.classList.contains("edit")) {
       const current = li.querySelector(".title").textContent;
       const next = prompt("할 일 수정", current);
       if (next !== null && next.trim()) {
-        await updateDoc(doc(db, "todos", id), { title: next.trim() });
+        await update(ref(db, `todos/${id}`), { title: next.trim() });
       }
     }
   } catch (err) {
