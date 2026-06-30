@@ -83,7 +83,7 @@ function subscribe() {
     collection(db, "todos"),
     (snap) => {
       allTodos = snap.docs.map((d) => {
-        const data = d.data();
+        const data = d.data({ serverTimestamps: "estimate" });
         return {
           id: d.id,
           title: data.title ?? "",
