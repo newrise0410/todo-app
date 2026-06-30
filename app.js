@@ -1,6 +1,7 @@
 import { firebaseConfig } from "./firebase-config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { filterTodos, sortTodos, isOverdue } from "./todo-logic.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -32,3 +33,72 @@ document.getElementById("theme-toggle").addEventListener("click", () => {
   localStorage.setItem(THEME_KEY, next);
 });
 initTheme();
+
+// --- State ---
+let allTodos = [];
+let filters = { status: "all", category: "all" };
+let sortMode = "created";
+
+function todayStr() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+  );
+}
+
+function render() {
+  const list = document.getElementById("todo-list");
+  const emptyState = document.getElementById("empty-state");
+  const visible = sortTodos(filterTodos(allTodos, filters), sortMode);
+  const today = todayStr();
+
+  list.innerHTML = "";
+  emptyState.hidden = visible.length > 0;
+
+  for (const t of visible) {
+    const li = document.createElement("li");
+    li.className = "todo-item" + (t.done ? " done" : "") + (isOverdue(t, today) ? " overdue" : "");
+    li.dataset.id = t.id;
+    li.innerHTML = `
+      <input type="checkbox" class="toggle" ${t.done ? "checked" : ""} />
+      <span class="title">${escapeHtml(t.title)}</span>
+      <span class="badge">${escapeHtml(t.category)}</span>
+      <span class="due">${t.dueDate ? escapeHtml(t.dueDate) : ""}</span>
+      <button type="button" class="edit">수정</button>
+      <button type="button" class="delete">삭제</button>
+    `;
+    list.appendChild(li);
+  }
+}
+
+// --- Realtime subscription ---
+function subscribe() {
+  onSnapshot(
+    collection(db, "todos"),
+    (snap) => {
+      allTodos = snap.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          title: data.title ?? "",
+          done: !!data.done,
+          dueDate: data.dueDate ?? null,
+          category: data.category ?? "기타",
+          createdAt: data.createdAt?.toMillis?.() ?? 0,
+        };
+      });
+      render();
+    },
+    (err) => {
+      console.error(err);
+      showToast("데이터를 불러오지 못했습니다");
+    }
+  );
+}
+subscribe();
